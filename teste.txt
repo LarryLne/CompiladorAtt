@@ -1,5 +1,6 @@
 program ident <> 13
 begin
+1.0
 a {kcasa} /*barro*/
 ab3
 <= <> ( $ /

@@ -1,3 +1,5 @@
+from logging import Logger as log
+
 simbolos_simples = ["(", ")", "*", "/", "+", "-", ">", "<", "$", ";", ":", ","]
 simbolos_duplos = ["<>", ">=", "<=", ":="]
 palavras_reservadas = ["if", "then", "while", "do", "write", "read", "else", "begin", "end", "ident", "numero_int",
@@ -5,9 +7,9 @@ palavras_reservadas = ["if", "then", "while", "do", "write", "read", "else", "be
 
 arquivo = open("teste.txt", "r")
 
-linha_atual = 0
+linha_atual = 1 # Toma conta de que em que linha estamos no arquivo, não funciona 100%
 token = ''
-c = 0
+c = ''
 
 def read_char():
     return arquivo.read(1)
@@ -19,8 +21,14 @@ def is_char(c):
     return 'a' <= c <= 'z' or 'A' <= c <= 'Z'
 
 def is_number(c):
-    return '0' <= c <= '9' or c == '.'
+    return '0' <= c <= '9'
 
+def is_newline(c):
+    global linha_atual
+    if c == '\n':
+        linha_atual += 1
+        return True
+    return False
 
 while True:
 
@@ -31,17 +39,6 @@ while True:
 
     token = read_char() # Lê o próximo caracter.
 
-    while token == ' ':
-        token = read_char()
-        if token != ' ':
-            unread_char()
-            break
-
-    if read_char() == '\n':
-        linha_atual += 1
-    else:
-        unread_char()
-
     if is_char(token): # Identificando se é palavra reservada ou identificador.
         c = token
         while is_char(c) or is_number(c):
@@ -49,42 +46,38 @@ while True:
             if is_char(c) or is_number(c):
                 token += c
             else:
-                print("Caracter inválido {} na linha {}".format(repr(c), linha_atual))
-        # fixme: Adicionar token em tabela de tokens.
+                if not is_newline(c):
+                    print("Caracter inválido {} na linha {}".format(repr(c), linha_atual))
+        # todo: Adicionar token em tabela de tokens.
         if token in palavras_reservadas:
             print("Palavra reservada: '{}', linha: {}".format(token, linha_atual))
         else:
             print("Identificador: '{}', linha: {}".format(token, linha_atual))
         token = ''
-    # elif is_number(token): # Identifica se é um número (inteiro, real)
-    #     c = token
-    #     real = False
-    #     while is_number(c):
-    #         cursor += 1
-    #         if cursor > tamanho_fonte - 1:
-    #             break
-    #         c = arquivo_fonte[cursor]
-    #         while is_number(c):
-    #             token += c
-    #             cursor += 1
-    #             c = arquivo_fonte[cursor]
-    #             if c == '.':
-    #                 real = True
-    #                 cursor += 1
-    #                 token += '.'
-    #                 while is_number(c):
-    #                     token += c
-    #                     c = arquivo_fonte[cursor]
-    #                     cursor += 1
-    #                     if cursor > tamanho_fonte - 1:
-    #                         break
-    #     if real:
-    #         print(token, ": numero_real/ linha_atual: ", linha_atual)
-    #     else:
-    #         print(token, ": numero_inteiro/ linha_atual: ", linha_atual)
-    #
-    #     token = ''
-    # ### Identifica comentários
+    elif is_number(token): # Identifica se é um número (inteiro, real)
+        c = token
+        token = ''
+        real = False
+        if is_number(c):
+            while is_number(c):
+                token += c
+                c = read_char()
+            if c == '.':
+                real = True
+                token += c
+                c = read_char()
+                while is_number(c):
+                    token += c
+                    c = read_char()
+            else:
+                if not is_newline(c):
+                    print("Caracter inválido {} na linha {}".format(repr(c), linha_atual))
+        # todo: Adicionar token em tabela de tokens.
+        if real:
+            print("Número real: '{}', linha: {}".format(token, linha_atual))
+        else:
+            print("Número inteiro: '{}', linha: {}".format(token, linha_atual))
+    # Identifica comentários
     # elif token == "{":
     #     c = token
     #     while c != "}":
