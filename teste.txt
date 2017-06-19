@@ -1,7 +1,17 @@
-program ident <> 13
-begin
-1.0
-a {kcasa} /*barro*/
-ab3
-<= <> ( $ /
-end
+program MeuCod
+	var v1, v2 : integer; /* eu
+amo bolinhos */
+	procedure Soma (cont, num : real; total : real)
+	begin
+		read (v1);
+		bolo := 2.5 + 3.5;
+		bolacha(recheio;massa);
+		write (v2);  { bolinhos sao ops}
+		while cont < total do write (num) $
+	end
+	begin
+	if v1 <= v2 then
+		read (v1)
+	else
+		read (v2) $
+	end
