@@ -76,49 +76,25 @@ while True:
     if is_number(token):
         c = token
         real = False
-        while is_number(token):
+        while is_number(c):
             cursor += 1
-
             if cursor > tamanho_fonte - 1:
                 break
             c = arquivo_fonte[cursor]
-            # print(c)
             while is_number(c):
-
                 token += c
                 cursor += 1
                 c = arquivo_fonte[cursor]
-                # print(c)
                 if c == '.':
                     real = True
                     cursor += 1
                     token += '.'
-
                     while is_number(c):
-
                         token += c
                         c = arquivo_fonte[cursor]
                         cursor += 1
-                        # print(c)
                         if cursor > tamanho_fonte - 1:
                             break
-                            ##            if c in numeros:
-                            ##                token += c
-                            ##            elif c == '.':
-                            ##                cursor += 1
-                            ##                real = True
-                            ##                if cursor > tamanho_fonte - 1:
-                            ##                   break
-                            ##                token += '.'
-                            ##
-                            ##                #c = arquivo_fonte[cursor]
-                            ##                while c in numeros:
-                            ##                    token += c
-                            ##                    c = arquivo_fonte[cursor]
-                            ##                    cursor += 1
-                            ##                    print(c)
-                            ##                    if cursor > tamanho_fonte - 1:
-                            ##                       break
         if real:
             print(token, ": numero_real/ linha: ", linha)
         else:
@@ -130,22 +106,17 @@ while True:
 
     ### Identifica comentários
     if token == "{":
-        ##print(c, endl='')
         c = token
         while c != "}":
-
             cursor += 1
             if cursor > tamanho_fonte - 1:
                 break
             c = arquivo_fonte[cursor - 1]
             token += c
-
         if "}" in token:
             print(token, ': comentário/ linha: ', linha)
-
         else:
             print('erro/ linha: ', linha)
-
         token = ''
         cursor += 1
 
@@ -154,25 +125,19 @@ while True:
         t = token
         cursor += 1
         c = arquivo_fonte[cursor - 1]
-        # print(c)
         token += c
 
         if c == "*":
             flag = False
-
             while flag == False:
                 cursor += 1
-
                 if cursor > tamanho_fonte:
                     break
-
                 c = arquivo_fonte[cursor - 1]
                 token += c
-
                 if c == "*":
                     cursor += 1
                     c = arquivo_fonte[cursor - 1]
-
                     if c == "/":
                         token += c
                         print(token, ': comentário/ linha: ', linha)
@@ -184,7 +149,6 @@ while True:
         token = ''
         c = ''
         cursor += 1
-        # c = arquivo_fonte[cursor-1]
 
         ### Identifica se é símbolo simples ou duplo
     if token in simbolos_simples:
@@ -193,20 +157,14 @@ while True:
         duplo = False
         c = token
         while c in simbolos_simples:
-
             if c == "<":
                 cursor += 1
-
                 if cursor > tamanho_fonte - 1:
                     break
                 c = arquivo_fonte[cursor - 1]
-                # print("casa",c)
                 if c == ">" or c == "=":
                     token += c
-                    # duplo=True
-
                     print(token, " : símbolo_duplo/ linha: ", linha)
-
                 else:
                     print(token, ": símbolo_simples/ linha: ", linha)
                     cursor -= 1
@@ -216,37 +174,14 @@ while True:
                 if cursor > tamanho_fonte - 1:
                     break
                 c = arquivo_fonte[cursor - 1]
-                # print("oi", c)
                 if c == "=":
                     token += c
-                    # duplo  = True
                     print(token, " : símbolo_duplo/ linha: ", linha)
                 else:
                     print(token, ": símbolo_simples/ linha: ", linha)
                     cursor -= 1
             else:
                 print(token, ": simbolo simples/ linha: ", linha)
-
-            # print(c)
-
-            # print(token)
-
             token = ''
             c = ''
             cursor += 1
-
-
-
-
-
-##
-##for x in letra:
-##    if k == x:
-##        print ("true")
-##        list = [k]
-##    else:
-##        print("false")
-##
-##print ("oi")
-##print(list)
-####print f.read(1)
