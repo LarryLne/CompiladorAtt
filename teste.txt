@@ -6,7 +6,7 @@ amo bolinhos */
 		read (v1);
 		bolo := 2.5 + 3.5;
 		bolacha(recheio;massa);
-		write (v2);  { bolinhos sao ops}
+		write (v2); { bolinhos sao ops}
 		while cont < total do write (num) $
 	end
 	begin

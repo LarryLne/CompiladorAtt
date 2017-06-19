@@ -11,7 +11,7 @@ linha_atual = 1  # Toma conta de que em que linha estamos no arquivo, não funci
 token = ''
 c = ''
 
-tabela_simbolos = []  # Dicionário para guardar a tabela de símbolos.
+tabela_simbolos = []  # Dicionário para guardar a tabela de simbolos.
 
 
 def read_char():
@@ -37,6 +37,7 @@ def is_newline(c):
         return True
     return False
 
+
 # todo: Transformar cada etapa em funções !!!
 while True:
 
@@ -46,6 +47,8 @@ while True:
         unread_char()
 
     token = read_char()  # Lê o próximo caracter.
+
+    is_newline(token)
 
     if is_char(token):  # Identificando se é palavra reservada ou identificador.
         c = token
@@ -62,8 +65,7 @@ while True:
         else:
             tabela_simbolos.append({'Tipo': 'identificador', "Token": token, "Linha": linha_atual})
             print("Identificador: '{}', linha: {}".format(token, linha_atual))
-        token = ''
-    elif is_number(token):  # Identifica se é um número (inteiro, real)
+    elif is_number(token):  # Identifica se é um Numero (inteiro, real)
         c = token
         token = ''
         real = False
@@ -81,16 +83,20 @@ while True:
             else:
                 if not is_newline(c):
                     print("Caracter inválido {} na linha {}".format(repr(c), linha_atual))
-        if real:
-            tabela_simbolos.append({'Tipo': 'número_real', "Token": token, "Linha": linha_atual})
-            print("Número real: '{}', linha: {}".format(token, linha_atual))
         else:
-            tabela_simbolos.append({'Tipo': 'número_inteiro', "Token": token, "Linha": linha_atual})
-            print("Número inteiro: '{}', linha: {}".format(token, linha_atual))
+            is_newline(c)
+
+        if real:
+            tabela_simbolos.append({'Tipo': 'numero_real', "Token": token, "Linha": linha_atual})
+            print("Numero real: '{}', linha: {}".format(token, linha_atual))
+        else:
+            tabela_simbolos.append({'Tipo': 'numero_inteiro', "Token": token, "Linha": linha_atual})
+            print("Numero inteiro: '{}', linha: {}".format(token, linha_atual))
     elif token == "{":  # Identifica comentários
         c = token
         while c != "}":
             c = read_char()
+            is_newline(c)  # fixme: Não tenho certeza se é a melhor forma de checar isso.
             token += c
         if "}" in token:
             print("Comentário: '{}', linha: {}".format(token, linha_atual))
@@ -102,20 +108,23 @@ while True:
         unread_char()
         t = token
         c = read_char()
+        is_newline(c)  # fixme: Não tenho certeza se é a melhor forma de checar isso.
         token += c
         if c == "*":
             flag = False
             while flag == False:
                 c = read_char()
+                is_newline(c)  # fixme: Não tenho certeza se é a melhor forma de checar isso.
                 token += c
                 if c == "*":
                     c = read_char()
+                    is_newline(c)  # fixme: Não tenho certeza se é a melhor forma de checar isso.
                     if c == "/":
                         token += c
                         print("Comentário: '{}', linha: {}".format(token, linha_atual))
                         flag = True
     # fixme: O Igor acha que aqui dá pra melhorar.
-    elif token in simbolos_simples:  # Identifica se é símbolo simples ou duplo
+    elif token in simbolos_simples:  # Identifica se é simbolo simples ou duplo
         duplo = False
         c = token
         if c in simbolos_simples:
@@ -123,31 +132,33 @@ while True:
                 c = read_char()
                 if c == ">" or c == "=":
                     token += c
-                    tabela_simbolos.append({'Tipo': 'símbolo_duplo', "Token": token, "Linha": linha_atual})
-                    print("Símbolo duplo: '{}', linha: {}".format(token, linha_atual))
+                    tabela_simbolos.append({'Tipo': 'simbolo_duplo', "Token": token, "Linha": linha_atual})
+                    print("Simbolo duplo: '{}', linha: {}".format(token, linha_atual))
                 else:
-                    tabela_simbolos.append({'Tipo': 'símbolo_simples', "Token": token, "Linha": linha_atual})
-                    print("Símbolo simples: '{}', linha: {}".format(token, linha_atual))
+                    tabela_simbolos.append({'Tipo': 'simbolo_simples', "Token": token, "Linha": linha_atual})
+                    print("Simbolo simples: '{}', linha: {}".format(token, linha_atual))
                     unread_char()
+
             elif c == ">" or c == ":":
                 c = read_char()
                 if c == "=":
                     token += c
-                    tabela_simbolos.append({'Tipo': 'símbolo_duplo', "Token": token, "Linha": linha_atual})
-                    print("Símbolo duplo: '{}', linha: {}".format(token, linha_atual))
+                    tabela_simbolos.append({'Tipo': 'simbolo_duplo', "Token": token, "Linha": linha_atual})
+                    print("Simbolo duplo: '{}', linha: {}".format(token, linha_atual))
                 else:
-                    tabela_simbolos.append({'Tipo': 'símbolo_simples', "Token": token, "Linha": linha_atual})
-                    print("Símbolo simples: '{}', linha: {}".format(token, linha_atual))
+                    tabela_simbolos.append({'Tipo': 'simbolo_simples', "Token": token, "Linha": linha_atual})
+                    print("Simbolo simples: '{}', linha: {}".format(token, linha_atual))
                     unread_char()
+
             else:
-                tabela_simbolos.append({'Tipo': 'símbolo_duplo', "Token": token, "Linha": linha_atual})
-                print("Símbolo simples: '{}', linha: {}".format(token, linha_atual))
+                tabela_simbolos.append({'Tipo': 'simbolo_duplo', "Token": token, "Linha": linha_atual})
+                print("Simbolo simples: '{}', linha: {}".format(token, linha_atual))
 
 # Fecha o arquivo ; )
 arquivo.close()
 
 # Grava a tabela em um arquivo de texto.
 tabela_simbolos_json = json.dumps(tabela_simbolos, sort_keys=True, indent=2)
-tabela = open("tabela_simbolos.txt", "w")
+tabela = open("tabela_simbolos.txt", "w", encoding="utf-8")
 tabela.write(tabela_simbolos_json)
 tabela.close()
