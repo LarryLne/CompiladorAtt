@@ -1,5 +1,3 @@
-from logging import Logger as log
-
 simbolos_simples = ["(", ")", "*", "/", "+", "-", ">", "<", "$", ";", ":", ","]
 simbolos_duplos = ["<>", ">=", "<=", ":="]
 palavras_reservadas = ["if", "then", "while", "do", "write", "read", "else", "begin", "end", "ident", "numero_int",
@@ -77,47 +75,34 @@ while True:
             print("Número real: '{}', linha: {}".format(token, linha_atual))
         else:
             print("Número inteiro: '{}', linha: {}".format(token, linha_atual))
-    # Identifica comentários
-    # elif token == "{":
-    #     c = token
-    #     while c != "}":
-    #         cursor += 1
-    #         if cursor > tamanho_fonte - 1:
-    #             break
-    #         c = arquivo_fonte[cursor - 1]
-    #         token += c
-    #     if "}" in token:
-    #         print(token, ': comentário/ linha_atual: ', linha_atual)
-    #     else:
-    #         print('erro/ linha_atual: ', linha_atual)
-    #     token = ''
-    #     cursor += 1
-    # elif token == "/":
-    #     t = token
-    #     cursor += 1
-    #     c = arquivo_fonte[cursor - 1]
-    #     token += c
-    #     if c == "*":
-    #         flag = False
-    #         while flag == False:
-    #             cursor += 1
-    #             if cursor > tamanho_fonte:
-    #                 break
-    #             c = arquivo_fonte[cursor - 1]
-    #             token += c
-    #             if c == "*":
-    #                 cursor += 1
-    #                 c = arquivo_fonte[cursor - 1]
-    #                 if c == "/":
-    #                     token += c
-    #                     print(token, ': comentário/ linha_atual: ', linha_atual)
-    #                     flag = True
-    #     else:
-    #         print(t, ": símbolo simples/ linha_atual: ", linha_atual)
-    #         cursor -= 1
-    #     token = ''
-    #     c = ''
-    #     cursor += 1
+    elif token == "{":  # Identifica comentários
+        c = token
+        while c != "}":
+            c = read_char()
+            token += c
+        if "}" in token:
+            print("Comentário: '{}', linha: {}".format(token, linha_atual))
+        else:
+            # fixme: Olhar isso no futuro.
+            print("Caracter inválido {} na linha {}".format(repr(c), linha_atual))
+        token = ''
+    elif token == "/":
+        t = token
+        c = read_char()
+        token += c
+        if c == "*":
+            flag = False
+            while flag == False:
+                c = read_char()
+                token += c
+                if c == "*":
+                    c = read_char()
+                    if c == "/":
+                        token += c
+                        print("Comentário: '{}', linha: {}".format(token, linha_atual))
+                        flag = True
+        token = ''
+        c = ''
     # elif token in simbolos_simples: # Identifica se é símbolo simples ou duplo
     #     if token == "/":
     #         break
