@@ -1,21 +1,30 @@
-letras = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v",
-          "x", "w", "y", "z"]
-numeros = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."]
-
 simbolos_simples = ["(", ")", "*", "/", "+", "-", ">", "<", "$", ";", ":", ","]
 simbolos_duplos = ["<>", ">=", "<=", ":="]
 palavras_reservadas = ["if", "then", "while", "do", "write", "read", "else", "begin", "end", "ident", "numero_int",
                        "numero_real", "program"]
 
-# comentarios = ["{","}","/*","*/"]
 arquivo = open("teste.txt", "r")
 arquivo_fonte = arquivo.read()
+arquivo.seek(0, 0)
 tamanho_fonte = len(arquivo_fonte)
 
 cursor = 0
 linha = 0
 token = ''
 c = 0
+
+def read_char():
+    return arquivo.read(1)
+
+def unread_char():
+    arquivo.seek(arquivo.tell() -1 , 0)
+
+def is_char(c):
+    return 'a' <= c <= 'z' or 'A' <= c <= 'Z'
+
+# todo: provavelmente eu vou deletar esse c == '.'
+def is_number(c):
+    return '0' <= c <= '9' or c == '.'
 
 
 while True:
@@ -39,10 +48,11 @@ while True:
 
     # print(token)
     #### Identificando se é palavra reservada ou identificador.
-    if token in letras:
+
+    if is_char(token):
         c = token
 
-        while c in letras or c in numeros:
+        while is_char(c) or is_number(c):
             cursor += 1
 
             if cursor > tamanho_fonte - 1:
@@ -50,9 +60,8 @@ while True:
 
             c = arquivo_fonte[cursor]
 
-            if c in letras or c in numeros:
+            if is_char(c) or is_number(c):
                 token += c
-
 
         if token in palavras_reservadas:
             print(token, ': palavra_reservada/ linha: ', linha)
@@ -64,17 +73,17 @@ while True:
         token = ''
 
     #### Identifica se é um número inteiro ou real.
-    if token in numeros:
+    if is_number(token):
         c = token
         real = False
-        while c in numeros:
+        while is_number(token):
             cursor += 1
 
             if cursor > tamanho_fonte - 1:
                 break
             c = arquivo_fonte[cursor]
             # print(c)
-            while c in numeros:
+            while is_number(c):
 
                 token += c
                 cursor += 1
@@ -85,7 +94,7 @@ while True:
                     cursor += 1
                     token += '.'
 
-                    while c in numeros:
+                    while is_number(c):
 
                         token += c
                         c = arquivo_fonte[cursor]
