@@ -149,7 +149,6 @@ while True:
                     tabela_simbolos.append({'Tipo': 'simbolo_simples', "Token": token, "Linha": linha_atual})
                     print("Simbolo simples: '{}', linha: {}".format(token, linha_atual))
                     unread_char()
-
             else:
                 tabela_simbolos.append({'Tipo': 'simbolo_duplo', "Token": token, "Linha": linha_atual})
                 print("Simbolo simples: '{}', linha: {}".format(token, linha_atual))
