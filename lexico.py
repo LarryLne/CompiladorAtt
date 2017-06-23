@@ -115,6 +115,22 @@ def comentario2 (token):
                     token += c
                     print("Comentário: '{}', linha: {}".format(token, linha_atual))
                     flag = True
+
+def simbolos(token):
+    if token == "<" or token == ">" or token == ":":
+        c = read_char()
+        simb = token + c
+        if simb in simbolos_duplos:
+            token += c
+            tabela_simbolos.append({'Tipo': 'simbolo_duplo', "Token": token, "Linha": linha_atual})
+            print("Simbolo duplo: '{}', linha: {}".format(token, linha_atual))
+        else:
+            tabela_simbolos.append({'Tipo': 'simbolo_simples', "Token": token, "Linha": linha_atual})
+            print("Simbolo simples: '{}', linha: {}".format(token, linha_atual))
+    else:
+        tabela_simbolos.append({'Tipo': 'simbolo_duplo', "Token": token, "Linha": linha_atual})
+        print("Simbolo simples: '{}', linha: {}".format(token, linha_atual))
+
 # todo: Transformar cada etapa em funções !!!
 while True:
 
@@ -139,47 +155,11 @@ while True:
     elif token == "/" and read_char() == "*":
         comentario2(token)
 
-    # fixme: O Igor acha que aqui dá pra melhorar.
     elif token in simbolos_simples:  # Identifica se é simbolo simples ou duplo
-        if token == "<" or token == ">" or token == ":":
-            c = read_char()
-            simb = token + c
-            if simb in simbolos_duplos:
-                token += c
-                tabela_simbolos.append({'Tipo': 'simbolo_duplo', "Token": token, "Linha": linha_atual})
-                print("Simbolo duplo: '{}', linha: {}".format(token, linha_atual))
-            else:
-                tabela_simbolos.append({'Tipo': 'simbolo_simples', "Token": token, "Linha": linha_atual})
-                print("Simbolo simples: '{}', linha: {}".format(token, linha_atual))
+        simbolos(token)
 
-        # duplo = False
-        # c = token
-        # if c in simbolos_simples:
-        #     if c == "<":
-        #         c = read_char()
-        #         if c == ">" or c == "=":
 
-            #         token += c
-            #         tabela_simbolos.append({'Tipo': 'simbolo_duplo', "Token": token, "Linha": linha_atual})
-            #         print("Simbolo duplo: '{}', linha: {}".format(token, linha_atual))
-            #     else:
-            #         tabela_simbolos.append({'Tipo': 'simbolo_simples', "Token": token, "Linha": linha_atual})
-            #         print("Simbolo simples: '{}', linha: {}".format(token, linha_atual))
-            #         unread_char()
-            #
-            # elif c == ">" or c == ":":
-            #     c = read_char()
-            #     if c == "=":
-            #         token += c
-            #         tabela_simbolos.append({'Tipo': 'simbolo_duplo', "Token": token, "Linha": linha_atual})
-            #         print("Simbolo duplo: '{}', linha: {}".format(token, linha_atual))
-            #     else:
-            #         tabela_simbolos.append({'Tipo': 'simbolo_simples', "Token": token, "Linha": linha_atual})
-            #         print("Simbolo simples: '{}', linha: {}".format(token, linha_atual))
-            #         unread_char()
-            # else:
-            #     tabela_simbolos.append({'Tipo': 'simbolo_duplo', "Token": token, "Linha": linha_atual})
-            #     print("Simbolo simples: '{}', linha: {}".format(token, linha_atual))
+
 
 # Fecha o arquivo ; )
 arquivo.close()

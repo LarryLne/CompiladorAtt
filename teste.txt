@@ -14,5 +14,5 @@ amo bolinhos */
 	if v1 <= v2 then
 		read (v1)
 	else
-		read (v2) $
+		read (v2) $ #
 	end
