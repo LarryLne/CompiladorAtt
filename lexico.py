@@ -37,7 +37,7 @@ def is_newline(c):
         return True
     return False
 
-def Palavra_ou_ID (token):
+def reservada_ou_id (token):
     c = token
     while is_char(c) or is_number(c):
         c = read_char()
@@ -55,7 +55,7 @@ def Palavra_ou_ID (token):
         tabela_simbolos.append({'Tipo': 'identificador', "Token": token, "Linha": linha_atual})
         print("Identificador: '{}', linha: {}".format(token, linha_atual))
 
-def Inteiro_ou_Real (token):
+def inteiro_ou_real (token):
     c = token
     token = ''
     real = False
@@ -83,6 +83,38 @@ def Inteiro_ou_Real (token):
         tabela_simbolos.append({'Tipo': 'numero_inteiro', "Token": token, "Linha": linha_atual})
         print("Numero inteiro: '{}', linha: {}".format(token, linha_atual))
 
+def comentario1 (token):
+    c = token
+    while c != "}":
+        c = read_char()
+        is_newline(c)  # fixme: Não tenho certeza se é a melhor forma de checar isso.
+        token += c
+    if "}" in token:
+        print("Comentário: '{}', linha: {}".format(token, linha_atual))
+    else:
+        # fixme: Olhar isso no futuro.
+        print("Caracter inválido {} na linha {}".format(repr(c), linha_atual))
+    token = ''
+
+def comentario2 (token):
+    unread_char()
+    t = token
+    c = read_char()
+    is_newline(c)  # fixme: Não tenho certeza se é a melhor forma de checar isso.
+    token += c
+    if c == "*":
+        flag = False
+        while flag == False:
+            c = read_char()
+            is_newline(c)  # fixme: Não tenho certeza se é a melhor forma de checar isso.
+            token += c
+            if c == "*":
+                c = read_char()
+                is_newline(c)  # fixme: Não tenho certeza se é a melhor forma de checar isso.
+                if c == "/":
+                    token += c
+                    print("Comentário: '{}', linha: {}".format(token, linha_atual))
+                    flag = True
 # todo: Transformar cada etapa em funções !!!
 while True:
 
@@ -96,42 +128,17 @@ while True:
     is_newline(token)
 
     if is_char(token):  # Identificando se é palavra reservada ou identificador.
-        Palavra_ou_ID(token)
+        reservada_ou_id(token)
 
     elif is_number(token): # Identifica se é um Numero (inteiro, real)
-        Inteiro_ou_Real(token)
+        inteiro_ou_real(token)
 
     elif token == "{":  # Identifica comentários
-        c = token
-        while c != "}":
-            c = read_char()
-            is_newline(c)  # fixme: Não tenho certeza se é a melhor forma de checar isso.
-            token += c
-        if "}" in token:
-            print("Comentário: '{}', linha: {}".format(token, linha_atual))
-        else:
-            # fixme: Olhar isso no futuro.
-            print("Caracter inválido {} na linha {}".format(repr(c), linha_atual))
-        token = ''
+        comentario1(token)
+
     elif token == "/" and read_char() == "*":
-        unread_char()
-        t = token
-        c = read_char()
-        is_newline(c)  # fixme: Não tenho certeza se é a melhor forma de checar isso.
-        token += c
-        if c == "*":
-            flag = False
-            while flag == False:
-                c = read_char()
-                is_newline(c)  # fixme: Não tenho certeza se é a melhor forma de checar isso.
-                token += c
-                if c == "*":
-                    c = read_char()
-                    is_newline(c)  # fixme: Não tenho certeza se é a melhor forma de checar isso.
-                    if c == "/":
-                        token += c
-                        print("Comentário: '{}', linha: {}".format(token, linha_atual))
-                        flag = True
+        comentario2(token)
+
     # fixme: O Igor acha que aqui dá pra melhorar.
     elif token in simbolos_simples:  # Identifica se é simbolo simples ou duplo
         duplo = False

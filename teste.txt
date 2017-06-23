@@ -1,6 +1,7 @@
 program MeuCod
 	var v1, v2 : integer; /* eu
 amo bolinhos */
+    {oi}
 	procedure Soma (cont, num : real; total : real)
 	begin
 		read (v1);
