@@ -1,4 +1,4 @@
-program MeuCod
+program MeuCod #
 	var v1, v2 : integer; /* eu
 amo bolinhos */
     {oi}

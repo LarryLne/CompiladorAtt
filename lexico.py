@@ -3,7 +3,7 @@ import json
 simbolos_simples = ["(", ")", "*", "/", "+", "-", ">", "<", "$", ";", ":", ","]
 simbolos_duplos = ["<>", ">=", "<=", ":="]
 palavras_reservadas = ["if", "then", "while", "do", "write", "read", "else",
-"begin", "end", "ident", "numero_int","procedure","numero_real", "program", "var"]
+"begin", "end", "ident", "numero_int","procedure","numero_real", "program", "var","real","integer"]
 
 arquivo = open("teste.txt", "r")
 
@@ -41,16 +41,21 @@ def reservada_ou_id (token):
     c = token
     while is_char(c) or is_number(c):
         c = read_char()
+        if c == ' ' or c== '\t' : # Pula espaços.
+            continue
         if is_char(c) or is_number(c):
             token += c
         else:
-            if not is_newline(c):
+            if c in simbolos_simples:
+                unread_char()
+            elif c == '':
+                continue
+            elif not is_newline(c):
                 print("Caracter inválido {} na linha {}".format(repr(c), linha_atual))
 
     if token in palavras_reservadas:
         tabela_simbolos.append({'Tipo': 'palavra_reservada', "Token": token, "Linha": linha_atual})
         print("Palavra reservada: '{}', linha: {}".format(token, linha_atual))
-
     else:
         tabela_simbolos.append({'Tipo': 'identificador', "Token": token, "Linha": linha_atual})
         print("Identificador: '{}', linha: {}".format(token, linha_atual))
@@ -63,6 +68,8 @@ def inteiro_ou_real (token):
         while is_number(c):
             token += c
             c = read_char()
+            if c == ' ' or c == '\t':  # Pula espaços.
+                continue
         if c == '.':
             real = True
             token += c
@@ -70,6 +77,8 @@ def inteiro_ou_real (token):
             while is_number(c):
                 token += c
                 c = read_char()
+                if c == ' ' or c == '\t':  # Pula espaços.
+                    continue
         else:
             if not is_newline(c):
                 print("Caracter inválido {} na linha {}".format(repr(c), linha_atual))
@@ -87,6 +96,8 @@ def comentario1 (token):
     c = token
     while c != "}":
         c = read_char()
+        if c == ' ' or c== '\t' : # Pula espaços.
+            continue
         is_newline(c)  # fixme: Não tenho certeza se é a melhor forma de checar isso.
         token += c
     if "}" in token:
@@ -97,7 +108,6 @@ def comentario1 (token):
     token = ''
 
 def comentario2 (token):
-    unread_char()
     t = token
     c = read_char()
     is_newline(c)  # fixme: Não tenho certeza se é a melhor forma de checar isso.
@@ -106,6 +116,8 @@ def comentario2 (token):
         flag = False
         while flag == False:
             c = read_char()
+            if c == ' ' or c == '\t':  # Pula espaços.
+                continue
             is_newline(c)  # fixme: Não tenho certeza se é a melhor forma de checar isso.
             token += c
             if c == "*":
@@ -139,27 +151,31 @@ while True:
     else:
         unread_char()
 
-    token = read_char()  # Lê o próximo caracter.
+    token = read_char()
+    # Lê o próximo caracter.
 
-    is_newline(token)
+    if not token:
+        continue
+
+    if is_newline(token):
+        continue
+
+    if token == ' ' or token == '\t':
+        continue
 
     if is_char(token):  # Identificando se é palavra reservada ou identificador.
         reservada_ou_id(token)
-
     elif is_number(token): # Identifica se é um Numero (inteiro, real)
         inteiro_ou_real(token)
-
     elif token == "{":  # Identifica comentários
         comentario1(token)
-
-    elif token == "/" and read_char() == "*":
+    elif token == "/" and ((read_char() == "*") or unread_char()):
+        unread_char()
         comentario2(token)
-
     elif token in simbolos_simples:  # Identifica se é simbolo simples ou duplo
         simbolos(token)
-
-
-
+    else:
+         print("Caracter inválido {} na linha {}".format(repr(token), linha_atual))
 
 # Fecha o arquivo ; )
 arquivo.close()
