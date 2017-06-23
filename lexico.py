@@ -55,6 +55,34 @@ def Palavra_ou_ID (token):
         tabela_simbolos.append({'Tipo': 'identificador', "Token": token, "Linha": linha_atual})
         print("Identificador: '{}', linha: {}".format(token, linha_atual))
 
+def Inteiro_ou_Real (token):
+    c = token
+    token = ''
+    real = False
+    if is_number(c):
+        while is_number(c):
+            token += c
+            c = read_char()
+        if c == '.':
+            real = True
+            token += c
+            c = read_char()
+            while is_number(c):
+                token += c
+                c = read_char()
+        else:
+            if not is_newline(c):
+                print("Caracter inválido {} na linha {}".format(repr(c), linha_atual))
+    else:
+        is_newline(c)
+
+    if real:
+        tabela_simbolos.append({'Tipo': 'numero_real', "Token": token, "Linha": linha_atual})
+        print("Numero real: '{}', linha: {}".format(token, linha_atual))
+    else:
+        tabela_simbolos.append({'Tipo': 'numero_inteiro', "Token": token, "Linha": linha_atual})
+        print("Numero inteiro: '{}', linha: {}".format(token, linha_atual))
+
 # todo: Transformar cada etapa em funções !!!
 while True:
 
@@ -69,50 +97,10 @@ while True:
 
     if is_char(token):  # Identificando se é palavra reservada ou identificador.
         Palavra_ou_ID(token)
-        # c = token
-        # while is_char(c) or is_number(c):
-        #     c = read_char()
-        #     if is_char(c) or is_number(c):
-        #         token += c
-        #     else:
-        #         if not is_newline(c):
-        #             print("Caracter inválido {} na linha {}".format(repr(c), linha_atual))
-        #
-        # if token in palavras_reservadas:
-        #     tabela_simbolos.append({'Tipo': 'palavra_reservada', "Token": token, "Linha": linha_atual})
-        #     print("Palavra reservada: '{}', linha: {}".format(token, linha_atual))
-        #
-        # else:
-        #     tabela_simbolos.append({'Tipo': 'identificador', "Token": token, "Linha": linha_atual})
-        #     print("Identificador: '{}', linha: {}".format(token, linha_atual))
 
-    elif is_number(token):  # Identifica se é um Numero (inteiro, real)
-        c = token
-        token = ''
-        real = False
-        if is_number(c):
-            while is_number(c):
-                token += c
-                c = read_char()
-            if c == '.':
-                real = True
-                token += c
-                c = read_char()
-                while is_number(c):
-                    token += c
-                    c = read_char()
-            else:
-                if not is_newline(c):
-                    print("Caracter inválido {} na linha {}".format(repr(c), linha_atual))
-        else:
-            is_newline(c)
+    elif is_number(token): # Identifica se é um Numero (inteiro, real)
+        Inteiro_ou_Real(token)
 
-        if real:
-            tabela_simbolos.append({'Tipo': 'numero_real', "Token": token, "Linha": linha_atual})
-            print("Numero real: '{}', linha: {}".format(token, linha_atual))
-        else:
-            tabela_simbolos.append({'Tipo': 'numero_inteiro', "Token": token, "Linha": linha_atual})
-            print("Numero inteiro: '{}', linha: {}".format(token, linha_atual))
     elif token == "{":  # Identifica comentários
         c = token
         while c != "}":
