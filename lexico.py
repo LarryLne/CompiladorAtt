@@ -2,8 +2,8 @@ import json
 
 simbolos_simples = ["(", ")", "*", "/", "+", "-", ">", "<", "$", ";", ":", ","]
 simbolos_duplos = ["<>", ">=", "<=", ":="]
-palavras_reservadas = ["if", "then", "while", "do", "write", "read", "else", "begin", "end", "ident", "numero_int",
-                       "numero_real", "program", "var"]
+palavras_reservadas = ["if", "then", "while", "do", "write", "read", "else",
+"begin", "end", "ident", "numero_int","procedure","numero_real", "program", "var"]
 
 arquivo = open("teste.txt", "r")
 
@@ -37,6 +37,23 @@ def is_newline(c):
         return True
     return False
 
+def Palavra_ou_ID (token):
+    c = token
+    while is_char(c) or is_number(c):
+        c = read_char()
+        if is_char(c) or is_number(c):
+            token += c
+        else:
+            if not is_newline(c):
+                print("Caracter inválido {} na linha {}".format(repr(c), linha_atual))
+
+    if token in palavras_reservadas:
+        tabela_simbolos.append({'Tipo': 'palavra_reservada', "Token": token, "Linha": linha_atual})
+        print("Palavra reservada: '{}', linha: {}".format(token, linha_atual))
+
+    else:
+        tabela_simbolos.append({'Tipo': 'identificador', "Token": token, "Linha": linha_atual})
+        print("Identificador: '{}', linha: {}".format(token, linha_atual))
 
 # todo: Transformar cada etapa em funções !!!
 while True:
@@ -51,20 +68,24 @@ while True:
     is_newline(token)
 
     if is_char(token):  # Identificando se é palavra reservada ou identificador.
-        c = token
-        while is_char(c) or is_number(c):
-            c = read_char()
-            if is_char(c) or is_number(c):
-                token += c
-            else:
-                if not is_newline(c):
-                    print("Caracter inválido {} na linha {}".format(repr(c), linha_atual))
-        if token in palavras_reservadas:
-            tabela_simbolos.append({'Tipo': 'palavra_reservada', "Token": token, "Linha": linha_atual})
-            print("Palavra reservada: '{}', linha: {}".format(token, linha_atual))
-        else:
-            tabela_simbolos.append({'Tipo': 'identificador', "Token": token, "Linha": linha_atual})
-            print("Identificador: '{}', linha: {}".format(token, linha_atual))
+        Palavra_ou_ID(token)
+        # c = token
+        # while is_char(c) or is_number(c):
+        #     c = read_char()
+        #     if is_char(c) or is_number(c):
+        #         token += c
+        #     else:
+        #         if not is_newline(c):
+        #             print("Caracter inválido {} na linha {}".format(repr(c), linha_atual))
+        #
+        # if token in palavras_reservadas:
+        #     tabela_simbolos.append({'Tipo': 'palavra_reservada', "Token": token, "Linha": linha_atual})
+        #     print("Palavra reservada: '{}', linha: {}".format(token, linha_atual))
+        #
+        # else:
+        #     tabela_simbolos.append({'Tipo': 'identificador', "Token": token, "Linha": linha_atual})
+        #     print("Identificador: '{}', linha: {}".format(token, linha_atual))
+
     elif is_number(token):  # Identifica se é um Numero (inteiro, real)
         c = token
         token = ''
