@@ -169,4 +169,4 @@ class Lexer():
                 self.simbolos(token)
             else:
                 print("Caracter inválido {} na linha {}".format(repr(token), self.linha_atual))
-        return self.tabela_simbolo
+        return self.tabela_simbolos
