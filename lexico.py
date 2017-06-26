@@ -64,6 +64,7 @@ def inteiro_ou_real (token):
     c = token
     token = ''
     real = False
+    valido = True
     if is_number(c):
         while is_number(c):
             token += c
@@ -74,11 +75,16 @@ def inteiro_ou_real (token):
             real = True
             token += c
             c = read_char()
-            while is_number(c):
-                token += c
-                c = read_char()
-                if c == ' ' or c == '\t':  # Pula espaços.
-                    continue
+            if not is_number(c): #Erros do formato Numero.
+                real = False
+                valido = False
+                print("O número {} está num formato errado na linha {}".format(repr(token), linha_atual))
+            else:
+                while is_number(c):
+                    token += c
+                    c = read_char()
+                    if c == ' ' or c == '\t':  # Pula espaços.
+                       continue
         else:
             if not is_newline(c):
                 print("Caracter inválido {} na linha {}".format(repr(c), linha_atual))
@@ -88,7 +94,7 @@ def inteiro_ou_real (token):
     if real:
         tabela_simbolos.append({'Tipo': 'numero_real', "Token": token, "Linha": linha_atual})
         print("Numero real: '{}', linha: {}".format(token, linha_atual))
-    else:
+    elif valido:
         tabela_simbolos.append({'Tipo': 'numero_inteiro', "Token": token, "Linha": linha_atual})
         print("Numero inteiro: '{}', linha: {}".format(token, linha_atual))
 
@@ -96,9 +102,9 @@ def comentario1 (token):
     c = token
     while c != "}":
         c = read_char()
-        if c == ' ' or c== '\t' : # Pula espaços.
-            continue
-        is_newline(c)  # fixme: Não tenho certeza se é a melhor forma de checar isso.
+        # if c == ' ' or c== '\t' : # Pula espaços.
+        #     continue
+        is_newline(c)
         token += c
     if "}" in token:
         print("Comentário: '{}', linha: {}".format(token, linha_atual))
@@ -110,19 +116,19 @@ def comentario1 (token):
 def comentario2 (token):
     t = token
     c = read_char()
-    is_newline(c)  # fixme: Não tenho certeza se é a melhor forma de checar isso.
+    is_newline(c)
     token += c
     if c == "*":
         flag = False
         while flag == False:
             c = read_char()
-            if c == ' ' or c == '\t':  # Pula espaços.
-                continue
-            is_newline(c)  # fixme: Não tenho certeza se é a melhor forma de checar isso.
+            # if c == ' ' or c == '\t':  # Pula espaços.
+            #     continue
+            is_newline(c)
             token += c
             if c == "*":
                 c = read_char()
-                is_newline(c)  # fixme: Não tenho certeza se é a melhor forma de checar isso.
+                is_newline(c)
                 if c == "/":
                     token += c
                     print("Comentário: '{}', linha: {}".format(token, linha_atual))
@@ -140,10 +146,10 @@ def simbolos(token):
             tabela_simbolos.append({'Tipo': 'simbolo_simples', "Token": token, "Linha": linha_atual})
             print("Simbolo simples: '{}', linha: {}".format(token, linha_atual))
     else:
-        tabela_simbolos.append({'Tipo': 'simbolo_duplo', "Token": token, "Linha": linha_atual})
+        tabela_simbolos.append({'Tipo': 'simbolo_simples', "Token": token, "Linha": linha_atual})
         print("Simbolo simples: '{}', linha: {}".format(token, linha_atual))
 
-# todo: Transformar cada etapa em funções !!!
+
 while True:
 
     if not read_char():
@@ -175,7 +181,14 @@ while True:
     elif token in simbolos_simples:  # Identifica se é simbolo simples ou duplo
         simbolos(token)
     else:
-         print("Caracter inválido {} na linha {}".format(repr(token), linha_atual))
+        if token == ".": #Erros do formato .999 por exemplo
+                c = read_char()
+                while is_number(c):
+                    token += c
+                    c = read_char()
+                print("O número {} está num formato errado na linha {}".format(repr(token), linha_atual))
+        else: #Erros de caracteres inválidos
+            print("Caracter inválido {} na linha {}".format(repr(token), linha_atual))
 
 # Fecha o arquivo ; )
 arquivo.close()
